@@ -41,6 +41,8 @@ dialog h2{font:700 1.5rem Fredoka,sans-serif;margin:0 0 4px}
 label{display:block;font-weight:650;margin:14px 0 6px}
 input,textarea{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 textarea{min-height:70px;resize:vertical}
+.chk{display:flex;gap:10px;align-items:center;font-weight:600;margin:14px 0 0}
+.chk input{width:20px;height:20px;margin:0;accent-color:var(--ink)}
 .acts{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .acts .ghost{background:#fff;color:var(--ink)}
 #derr{color:#9b2c2c;font-weight:600;margin:12px 0 0;min-height:1.4em}
@@ -67,6 +69,7 @@ textarea{min-height:70px;resize:vertical}
     <input id="nom" required maxlength="80" autocomplete="name">
     <label for="msg">Un petit mot pour les parents (facultatif)</label>
     <textarea id="msg" maxlength="300"></textarea>
+    <label class="chk"><input type="checkbox" id="aide"> J’ai besoin d’aide pour le modèle</label>
     <p id="derr" role="alert"></p>
     <div class="acts"><button type="submit" id="ok">Confirmer la réservation</button><button type="button" class="ghost" id="cancel">Annuler</button></div>
   </form>
@@ -118,20 +121,21 @@ $('cancel').addEventListener('click',()=>$('dlg').close());
 
 $('form').addEventListener('submit',async e=>{
   e.preventDefault();const ok=$('ok');ok.disabled=true;ok.textContent='Réservation…';$('derr').textContent='';
-  const nom=$('nom').value.trim(),message=$('msg').value.trim();
+  const nom=$('nom').value.trim(),message=$('msg').value.trim(),aide=$('aide').checked;
   try{
     if(BACKEND_URL){
-      const r=await fetch(BACKEND_URL,{method:'POST',body:JSON.stringify({id:cur.id,produit:cur.nom,nom,message})});
+      const r=await fetch(BACKEND_URL,{method:'POST',body:JSON.stringify({id:cur.id,produit:cur.nom,nom,message,aide})});
       const d=await r.json();
       if(!d.ok){
         if(d.error==='deja'){reserved.add(cur.id);render();$('dlg').close();note('Désolé, quelqu’un vient de réserver « '+cur.nom+' ». Choisissez un autre cadeau !');return}
-        throw 0;
+        throw new Error(d.error||'refus');
       }
     }
     reserved.add(cur.id);render();$('dlg').close();
-    note('Merci '+nom+' ! « '+cur.nom+' » est réservé pour vous.'+(BACKEND_URL?'':' (Mode aperçu : rien n’est enregistré.)'));
-  }catch{
-    $('derr').textContent='La réservation a échoué. Vérifiez votre connexion et réessayez.';
+    note('Merci '+nom+' ! « '+cur.nom+' » est réservé pour vous.'+(aide?' Les parents verront que vous avez besoin d’aide pour le modèle.':'')+(BACKEND_URL?'':' (Mode aperçu : rien n’est enregistré.)'));
+  }catch(x){
+    console.error(x);
+    $('derr').textContent='La réservation a échoué ('+(x&&x.message||'erreur réseau')+'). Vérifiez votre connexion et réessayez.';
   }finally{ok.disabled=false;ok.textContent='Confirmer la réservation'}
 });
 

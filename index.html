@@ -35,6 +35,10 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
 .go:disabled{opacity:.45;cursor:default}
 #board{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
 .hidden{display:none}
+#step2{position:relative}
+.cd{position:absolute;inset:0;display:grid;place-items:center;font:700 min(46vw,210px)/1 Fredoka,"Trebuchet MS",sans-serif;color:var(--ink);opacity:0;pointer-events:none}
+.cd.on{animation:pop 1s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(1.5)}18%{opacity:.3}70%{opacity:.24;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
 #res h2{font:700 2rem Fredoka,sans-serif;margin:4px 0}
 #verdict{font-weight:650}
 .road{position:relative;height:56px;overflow:hidden;margin-top:8px;border-bottom:4px dashed #6f86a3}
@@ -42,7 +46,7 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
 @keyframes ride{to{left:110%}}
 .road .wheel{transform-box:fill-box;transform-origin:center;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.road svg{animation:none;left:calc(50% - 45px)}.road .wheel{animation:none}}
+@media(prefers-reduced-motion:reduce){.cd.on{animation:none;opacity:.25}.road svg{animation:none;left:calc(50% - 45px)}.road .wheel{animation:none}}
 #conf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
 .link{background:none;border:0;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer;margin-top:8px}
 </style>
@@ -76,7 +80,7 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
   </div>
 </section>
 
-<section id="step2" class="card pad hidden"><canvas id="board" role="img" aria-label="Plateau sur lequel la roue descend en rebondissant"></canvas></section>
+<section id="step2" class="card pad hidden"><canvas id="board" role="img" aria-label="Plateau sur lequel la roue descend en rebondissant"></canvas><div class="cd" id="cd" aria-live="polite"></div></section>
 
 <section id="res" class="card pad hidden" aria-live="polite">
   <svg class="bike" style="width:100px" viewBox="-72 -78 144 80" aria-hidden="true"><use href="#b"/></svg>
@@ -91,6 +95,10 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
 <script>
 // ✏️ Le secret des parents : "fille" ou "garcon"
 const RESULT = "fille";
+
+// Collez ici l'adresse de l'application web Google (la même que dans les autres pages).
+// Elle sert à noter dans votre feuille qui a joué, son pari et s'il a gagné.
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbw6zrlcOcK-_JnJBmuvB-uhZ86nktsjaaYfWdmODKkeEkGz5XRknSYT71x3PTom_1eVag/exec';
 
 const $ = s => document.querySelector(s);
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -194,20 +202,37 @@ function drop(){
   frame();
 }
 
+let sent = false;
+function report(nom, win){
+  if(sent || !BACKEND_URL) return; sent = true;
+  const lbl = v => v === 'fille' ? 'fille' : 'garçon';
+  try{ fetch(BACKEND_URL, {method: 'POST', body: JSON.stringify({type: 'jeu', nom, pari: lbl(bet), resultat: lbl(RESULT), gagne: win})}).catch(() => {}); }catch(e){}
+}
+
+function countdown(done){
+  const cd = $('#cd'); let n = 3;
+  (function tick(){
+    if(n === 0){ cd.textContent = ''; cd.classList.remove('on'); return done(); }
+    cd.textContent = n; cd.classList.remove('on'); void cd.offsetWidth; cd.classList.add('on');
+    n--; setTimeout(tick, 1000);
+  })();
+}
+
 function reveal(){
   const fille = RESULT === 'fille', n = $('#name').value.trim();
   $('#title').textContent = fille ? 'C’est une petite fille !' : 'C’est un petit garçon !';
   const win = bet === RESULT;
   $('#verdict').textContent = (n ? n + ', ' : '') + (win ? 'bravo, tu avais vu juste ! 🏆' : 'raté cette fois… mais le tour ne fait que commencer ! 🚲');
+  report(n, win);
   $('#res').classList.remove('hidden'); $('#res').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
   confetti(); busy = false;
 }
 
 $('#launch').onclick = () => {
   $('#step1').classList.add('hidden'); $('#step2').classList.remove('hidden');
-  ball = {x: CX, y: 16, a: 0}; draw(); setTimeout(drop, 500);
+  ball = {x: CX, y: 16, a: 0}; draw(); countdown(drop);
 };
-$('#again').onclick = () => { $('#res').classList.add('hidden'); ball = {x: CX, y: 16, a: 0}; glow = -1; draw(); $('#step2').scrollIntoView({behavior: RM ? 'auto' : 'smooth'}); setTimeout(drop, 500); };
+$('#again').onclick = () => { $('#res').classList.add('hidden'); ball = {x: CX, y: 16, a: 0}; glow = -1; draw(); $('#step2').scrollIntoView({behavior: RM ? 'auto' : 'smooth'}); countdown(drop); };
 
 // --- Confettis ---
 const cc = $('#conf'), cx2 = cc.getContext('2d');
