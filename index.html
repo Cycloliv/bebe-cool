@@ -113,6 +113,7 @@ document.querySelectorAll('.choice').forEach(b => b.onclick = () => {
 const N = 7, W = 360, H = 360, DX = 40, DY = 34, CX = W/2, TOP = 56;
 const cv = $('#board'), ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
 cv.width = W*dpr; cv.height = H*dpr; ctx.scale(dpr, dpr);
+if(!ctx.roundRect) ctx.roundRect = function(x, y, w, h, r){ this.moveTo(x+r, y); this.arcTo(x+w, y, x+w, y+h, r); this.arcTo(x+w, y+h, x, y+h, r); this.arcTo(x, y+h, x, y, r); this.arcTo(x, y, x+w, y, r); this.closePath(); };
 const px = (i, r) => CX + (r - i/2) * DX;
 const py = i => TOP + i * DY;
 const SLOT_Y = py(N) - 4;
@@ -167,8 +168,8 @@ function drop(){
   const start = dur.reduce((a, d, s) => (a.push(s ? a[s-1] + dur[s-1] : 0), a), []);
   const total = start[last] + dur[last], SET = .32;
   const t0 = performance.now(); let lastSeg = 0, lastX = CX;
-  (function frame(now){
-    const el = (now - t0) / 1000;
+  function step(){
+    const now = performance.now(), el = Math.max(0, (now - t0) / 1000);
     if(el < total){
       let s = last; while(start[s] > el) s--;
       if(s > lastSeg){ const p = pts[s]; lastSeg = s; if(p.i < N){ hits[p.i + '-' + p.k] = now; ping(480 + Math.random() * 520, .12); } }
@@ -188,7 +189,9 @@ function drop(){
     trail = []; glow = finalSlot; draw();
     [784, 988, 1175].forEach((f, k) => setTimeout(() => ping(f, .5), k * 140));
     setTimeout(reveal, 900);
-  })(t0);
+  }
+  function frame(){ try{ step(); }catch(err){ trail = []; glow = finalSlot; try{ draw(); }catch(e){} reveal(); } }
+  frame();
 }
 
 function reveal(){

@@ -56,10 +56,10 @@ button.link{background:none;border:0;color:var(--ink);text-decoration:underline;
 
   <svg class="bike" viewBox="0 0 520 190" role="img" aria-label="Deux vélos d’adulte suivis d’un petit vélo d’enfant sur une route sinueuse"><path d="M-10 105C80 55 160 115 260 85S440 40 535 75V190H-10Z" fill="#e1f1ea"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112V190H-10Z" fill="#bfe3cf"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112" fill="none" stroke="#6f86a3" stroke-width="9" stroke-linecap="round"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112" fill="none" stroke="#fbfdff" stroke-width="1.8" stroke-dasharray="8 7"/><g transform="translate(70.0 108.5) rotate(-13.3) scale(0.68)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="5.625"/><path stroke-width="1.9" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="5.625"/><path stroke-width="1.9" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#f6d95b" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="6.1" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/><path d="M-40 -30V-84" stroke-width="2.5"/><path d="M-40 -84L-40 -70L-22 -77Z" fill="#e98ea0" stroke-width="2"/></g><g transform="translate(238.0 114.0) rotate(16.2) scale(1)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#4f8fbf" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.7" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/></g><g transform="translate(410.0 111.5) rotate(-14.9) scale(1)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#e98ea0" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.7" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/></g></svg>
 
-  <form name="pronostics" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="f">
+  <form id="f">
     <div class="bibhead">Mon pronostic</div>
     <div class="fields">
-      <input type="hidden" name="form-name" value="pronostics">
+      
       <p class="hp"><label>Ne pas remplir <input name="bot-field"></label></p>
 
       <div><label for="nom">Votre prénom et nom</label><input type="text" id="nom" name="nom" required autocomplete="name"></div>
@@ -98,15 +98,28 @@ document.getElementById('addname').addEventListener('click',e=>{
   if(h){h.hidden=false;h.focus()}
   if(!['prenom2','prenom3'].some(i=>document.getElementById(i).hidden))e.target.hidden=true;
 });
+// Collez ici l'adresse de l'application web Google (la même que dans liste.html).
+const BACKEND_URL='https://script.google.com/macros/s/AKfycbw6zrlcOcK-_JnJBmuvB-uhZ86nktsjaaYfWdmODKkeEkGz5XRknSYT71x3PTom_1eVag/exec';
 const f=document.getElementById('f'),btn=document.getElementById('btn'),err=document.getElementById('err'),ok=document.getElementById('ok');
+const msg=t=>{err.textContent=t;err.style.display='block'};
 f.addEventListener('submit',async e=>{
-  e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='Envoi…';
+  e.preventDefault();err.style.display='none';
+  const fd=new FormData(f);
+  const done=()=>{f.style.display='none';ok.style.display='block';ok.focus()};
+  if(fd.get('bot-field')){done();return}
+  if(!BACKEND_URL){msg('L’envoi n’est pas encore configuré : l’adresse Google est absente de la page.');return}
+  btn.disabled=true;btn.textContent='Envoi…';
+  const data={type:'pronostic'};
+  ['nom','date','poids','taille','prenom1','prenom2','prenom3','message'].forEach(k=>data[k]=String(fd.get(k)||'').trim());
   try{
-    const r=await fetch(location.pathname,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()});
-    if(!r.ok)throw 0;
-    f.style.display='none';ok.style.display='block';ok.focus();
-  }catch{
-    err.style.display='block';btn.disabled=false;btn.textContent='Envoyer mon pronostic';
+    const r=await fetch(BACKEND_URL,{method:'POST',body:JSON.stringify(data)});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'refus');
+    done();
+  }catch(x){
+    console.error(x);
+    msg('L’envoi a échoué ('+(x.message||'erreur réseau')+'). Vérifiez votre connexion et réessayez.');
+    btn.disabled=false;btn.textContent='Envoyer mon pronostic';
   }
 });
 </script>
