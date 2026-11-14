@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Petit Tour : on vous dit tout !</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2e4d;--sky:#cfe6f5;--sun:#f6d95b;--paper:#fbfdff;--line:#b3cde0;--rose:#e98ea0;--mint:#bfe3cf}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sky);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}
+nav a{padding:8px 16px;border:2px solid var(--ink);border-radius:999px;color:var(--ink);text-decoration:none;font:700 1rem Fredoka,sans-serif;background:var(--paper)}
+nav a[aria-current]{background:var(--sun)}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+main{max-width:620px;margin:0 auto;padding:40px 20px 64px}
+.col{max-width:460px;margin:0 auto;text-align:center}
+.bike{width:150px;height:auto}
+h1{font:700 clamp(2.1rem,8vw,2.9rem)/1.1 Fredoka,"Trebuchet MS",sans-serif;margin:8px 0 12px}
+h1 span{background:linear-gradient(transparent 60%,var(--sun) 60%)}
+p{margin:6px 0 16px}
+.card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;margin:18px 0;overflow:hidden}
+.bibhead{background:var(--sun);border-bottom:2px solid var(--ink);padding:12px 20px;font:700 1.25rem Fredoka,sans-serif}
+.pad{padding:20px}
+.card.pad{padding:20px}
+input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);margin-bottom:14px}
+.choices{display:flex;gap:12px}
+.choice{flex:1;border:2px solid var(--ink);border-radius:16px;padding:14px 8px;font:700 1.15rem Fredoka,sans-serif;color:var(--ink);cursor:pointer;transition:transform .15s}
+.choice small{display:block;font:400 .8rem system-ui,sans-serif;margin-top:2px}
+.choice.f{background:var(--sun)}.choice.g{background:var(--mint)}
+.choice.sel{transform:scale(1.05) rotate(-1.5deg);box-shadow:0 4px 0 var(--ink)}
+.go{font:700 1.15rem Fredoka,sans-serif;background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:12px;padding:13px 26px;cursor:pointer}
+.go:disabled{opacity:.45;cursor:default}
+#board{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.hidden{display:none}
+#res h2{font:700 2rem Fredoka,sans-serif;margin:4px 0}
+#verdict{font-weight:650}
+.road{position:relative;height:56px;overflow:hidden;margin-top:8px;border-bottom:4px dashed #6f86a3}
+.road svg{position:absolute;bottom:3px;left:-110px;width:90px;animation:ride 5s linear infinite}
+@keyframes ride{to{left:110%}}
+.road .wheel{transform-box:fill-box;transform-origin:center;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.road svg{animation:none;left:calc(50% - 45px)}.road .wheel{animation:none}}
+#conf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.link{background:none;border:0;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer;margin-top:8px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="b" fill="none" stroke="#1f2e4d" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><circle cx="42" cy="-28" r="28" stroke-width="4.5"/>
+<path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/>
+<path stroke="#e98ea0" stroke-width="5.5" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/>
+<path stroke-width="4.5" d="M-21 -66H-7M30 -62L27 -74H38"/></g></defs></svg>
+<canvas id="conf" aria-hidden="true"></canvas>
+<main>
+<nav aria-label="Pages"><a href="index.html" aria-current="page">Le Petit Tour</a><a href="pronostics.html">Pronostics</a><a href="liste.html">Liste de naissance</a></nav>
+<div class="col">
+<svg class="bike" viewBox="-72 -78 144 80" aria-hidden="true"><use href="#b"/></svg>
+<h1>Le <span>Petit Tour</span><br>est lancé !</h1>
+<p>Bientôt un nouveau coéquipier sur la selle… Petite fille ou petit garçon ? À toi de parier, puis la roue décidera !</p>
+
+<section id="step1" class="card">
+  <div class="bibhead">Mon pari</div>
+  <div class="pad">
+    <label for="name" class="hidden">Ton prénom</label>
+    <input id="name" placeholder="Ton prénom" maxlength="20" autocomplete="given-name">
+    <div class="choices">
+      <button class="choice f" data-v="fille" aria-pressed="false">🌻 Fille<small>je mise sur le soleil</small></button>
+      <button class="choice g" data-v="garcon" aria-pressed="false">🌊 Garçon<small>je mise sur l’océan</small></button>
+    </div>
+    <p style="margin:14px 0 10px" id="hint" aria-live="polite">Choisis ton camp pour continuer</p>
+    <button class="go" id="launch" disabled>Lâcher la roue !</button>
+  </div>
+</section>
+
+<section id="step2" class="card pad hidden"><canvas id="board" role="img" aria-label="Plateau sur lequel la roue descend en rebondissant"></canvas></section>
+
+<section id="res" class="card pad hidden" aria-live="polite">
+  <svg class="bike" style="width:100px" viewBox="-72 -78 144 80" aria-hidden="true"><use href="#b"/></svg>
+  <h2 id="title"></h2>
+  <p id="verdict"></p>
+  <div class="road" aria-hidden="true"><svg viewBox="-72 -78 144 80" fill="none" stroke="#1f2e4d" stroke-linecap="round" stroke-linejoin="round"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#e98ea0" stroke-width="5.5" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.5" d="M-21 -66H-7M30 -62L27 -74H38"/></svg></div>
+  <button class="link" id="again">Revoir la descente de la roue</button>
+</section>
+</div>
+</main>
+
+<script>
+// ✏️ Le secret des parents : "fille" ou "garcon"
+const RESULT = "fille";
+
+const $ = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let bet = null, busy = false, ac = null;
+
+function ping(f, d){ try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+  const o = ac.createOscillator(), g = ac.createGain(); o.type='triangle'; o.frequency.value=f;
+  g.gain.setValueAtTime(.08, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+d);
+  o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+d); }catch(e){} }
+
+document.querySelectorAll('.choice').forEach(b => b.onclick = () => {
+  bet = b.dataset.v;
+  document.querySelectorAll('.choice').forEach(x => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); });
+  $('#launch').disabled = false;
+  $('#hint').textContent = 'Ton pari : ' + (bet === 'fille' ? 'une petite fille' : 'un petit garçon') + ' !';
+});
+
+// --- Plateau du fakir ---
+const N = 7, W = 360, H = 360, DX = 40, DY = 34, CX = W/2, TOP = 56;
+const cv = $('#board'), ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
+cv.width = W*dpr; cv.height = H*dpr; ctx.scale(dpr, dpr);
+const px = (i, r) => CX + (r - i/2) * DX;
+const py = i => TOP + i * DY;
+const SLOT_Y = py(N) - 4;
+let ball = {x: CX, y: 16, a: 0}, glow = -1, trail = [], hits = {};
+
+function draw(now = performance.now()){
+  ctx.clearRect(0, 0, W, H);
+  const ink = css('--ink');
+  for(let j = 0; j <= N; j++){
+    const x = px(N, j), fille = j % 2 === 0;
+    ctx.fillStyle = fille ? css('--sun') : css('--mint');
+    ctx.globalAlpha = glow === j ? 1 : .6;
+    ctx.beginPath(); ctx.roundRect(x - DX/2 + 2, SLOT_Y, DX - 4, 64, 8); ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = ink; ctx.font = '700 10px Fredoka, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(fille ? 'Fille' : 'Garçon', x, SLOT_Y + 40);
+    ctx.font = '15px sans-serif'; ctx.fillText(fille ? '🌻' : '🌊', x, SLOT_Y + 58);
+  }
+  for(let i = 0; i < N; i++) for(let k = 0; k <= i; k++){
+    const h = hits[i + '-' + k], e = h ? Math.max(0, 1 - (now - h) / 300) : 0;
+    ctx.fillStyle = e ? css('--rose') : ink;
+    ctx.beginPath(); ctx.arc(px(i, k), py(i), 4.5 + 3 * e, 0, 7); ctx.fill();
+  }
+  trail.forEach((p, n) => { ctx.globalAlpha = (n / trail.length) * .22; ctx.fillStyle = ink;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 8 * n / trail.length + 3, 0, 7); ctx.fill(); });
+  ctx.globalAlpha = 1;
+  ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.a);
+  ctx.strokeStyle = ink; ctx.lineWidth = 2.5; ctx.fillStyle = css('--paper');
+  ctx.beginPath(); ctx.arc(0, 0, 11, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.lineWidth = 1;
+  for(let s = 0; s < 6; s++){ ctx.rotate(Math.PI/3); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(10,0); ctx.stroke(); }
+  ctx.restore();
+}
+
+function makePath(){
+  const cand = []; for(let j = 0; j <= N; j++) if((j % 2 === 0) === (RESULT === 'fille')) cand.push(j);
+  const t = cand[Math.floor(Math.random() * cand.length)];
+  const steps = Array.from({length: N}, (_, i) => i < t ? 1 : 0);
+  for(let i = steps.length - 1; i > 0; i--){ const k = Math.floor(Math.random() * (i + 1)); [steps[i], steps[k]] = [steps[k], steps[i]]; }
+  return steps;
+}
+
+// Mouvement balistique continu : gravité constante, rebond sur chaque clou, temps réel (indépendant des fps)
+function drop(){
+  if(busy) return; busy = true; glow = -1; hits = {}; trail = [];
+  const steps = makePath(); let r = 0;
+  const pts = [{x: CX, y: 16}, {x: px(0,0), y: py(0) - 15, i: 0, k: 0}];
+  steps.forEach((s, n) => { r += s; const i = n + 1;
+    pts.push({x: px(i, r), y: i === N ? SLOT_Y + 14 : py(i) - 15, i, k: r}); });
+  const finalSlot = r, last = pts.length - 2;
+  const dur = pts.slice(1).map((_, s) => s === 0 ? .32 : s === last ? .5 : .36);
+  const start = dur.reduce((a, d, s) => (a.push(s ? a[s-1] + dur[s-1] : 0), a), []);
+  const total = start[last] + dur[last], SET = .32;
+  const t0 = performance.now(); let lastSeg = 0, lastX = CX;
+  (function frame(now){
+    const el = (now - t0) / 1000;
+    if(el < total){
+      let s = last; while(start[s] > el) s--;
+      if(s > lastSeg){ const p = pts[s]; lastSeg = s; if(p.i < N){ hits[p.i + '-' + p.k] = now; ping(480 + Math.random() * 520, .12); } }
+      const T = dur[s], t = el - start[s], a = pts[s], b = pts[s + 1];
+      const g = s === last ? 1100 : 1400;
+      ball.x = a.x + (b.x - a.x) * t / T;
+      ball.y = s === 0 ? a.y + (b.y - a.y) * (t / T) ** 2
+        : a.y + ((b.y - a.y) / T - .5 * g * T) * t + .5 * g * t * t;
+    } else {
+      const u = Math.min((el - total) / SET, 1), e = pts[last + 1];
+      ball.x = e.x; ball.y = e.y - 7 * Math.abs(Math.sin(Math.PI * u)) * (1 - u);
+    }
+    ball.a += (ball.x - lastX) / 11 + .08; lastX = ball.x;
+    trail.push({x: ball.x, y: ball.y}); if(trail.length > 9) trail.shift();
+    draw(now);
+    if(el < total + SET) return requestAnimationFrame(frame);
+    trail = []; glow = finalSlot; draw();
+    [784, 988, 1175].forEach((f, k) => setTimeout(() => ping(f, .5), k * 140));
+    setTimeout(reveal, 900);
+  })(t0);
+}
+
+function reveal(){
+  const fille = RESULT === 'fille', n = $('#name').value.trim();
+  $('#title').textContent = fille ? 'C’est une petite fille !' : 'C’est un petit garçon !';
+  const win = bet === RESULT;
+  $('#verdict').textContent = (n ? n + ', ' : '') + (win ? 'bravo, tu avais vu juste ! 🏆' : 'raté cette fois… mais le tour ne fait que commencer ! 🚲');
+  $('#res').classList.remove('hidden'); $('#res').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
+  confetti(); busy = false;
+}
+
+$('#launch').onclick = () => {
+  $('#step1').classList.add('hidden'); $('#step2').classList.remove('hidden');
+  ball = {x: CX, y: 16, a: 0}; draw(); setTimeout(drop, 500);
+};
+$('#again').onclick = () => { $('#res').classList.add('hidden'); ball = {x: CX, y: 16, a: 0}; glow = -1; draw(); $('#step2').scrollIntoView({behavior: RM ? 'auto' : 'smooth'}); setTimeout(drop, 500); };
+
+// --- Confettis ---
+const cc = $('#conf'), cx2 = cc.getContext('2d');
+function confetti(){
+  if(RM) return;
+  cc.width = innerWidth; cc.height = innerHeight;
+  const cols = [css('--sun'), css('--mint'), css('--rose'), '#ffffff', '#4f8fbf'];
+  const ps = Array.from({length: 130}, () => ({x: Math.random() * cc.width, y: -20 - Math.random() * cc.height * .6,
+    vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, s: 5 + Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)], a: Math.random() * 6}));
+  let f = 0;
+  (function loop(){
+    cx2.clearRect(0, 0, cc.width, cc.height);
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += .1; cx2.save(); cx2.translate(p.x, p.y); cx2.rotate(p.a);
+      cx2.fillStyle = p.c; cx2.fillRect(-p.s/2, -p.s/4, p.s, p.s/2); cx2.restore(); });
+    if(++f < 260) requestAnimationFrame(loop); else cx2.clearRect(0, 0, cc.width, cc.height);
+  })();
+}
+draw();
+</script>
+</body>
+</html>

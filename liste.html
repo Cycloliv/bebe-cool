@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liste de naissance de Coline &amp; Oliver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2e4d;--sky:#cfe6f5;--sun:#f6d95b;--paper:#fbfdff;--line:#b3cde0;--rose:#e98ea0;--mint:#bfe3cf}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sky);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}
+nav a{padding:8px 16px;border:2px solid var(--ink);border-radius:999px;color:var(--ink);text-decoration:none;font:700 1rem Fredoka,sans-serif;background:var(--paper)}
+nav a[aria-current]{background:var(--sun)}
+main{max-width:680px;margin:0 auto;padding:40px 20px 64px}
+h1{font:700 clamp(2.1rem,8vw,3rem)/1.05 Fredoka,"Trebuchet MS",sans-serif;margin:0 0 12px}
+.intro{margin:0 0 22px;max-width:50ch}
+.track{position:relative;height:30px;margin:0 0 6px}
+.road{position:absolute;left:0;right:0;bottom:4px;height:6px;border-radius:3px;background:var(--paper);border:2px solid var(--ink);overflow:hidden}
+.road i{display:block;height:100%;background:var(--sun);width:0;transition:width .6s}
+.bk{position:absolute;bottom:8px;font-size:22px;transition:left .6s;transform:translateX(-50%) scaleX(-1)}
+#count{margin:0 0 22px;font-weight:650}
+#note{display:none;background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:10px 14px;margin:0 0 18px}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:14px 16px}
+.ico{width:56px;height:56px;border-radius:50%;background:var(--sun);border:2px solid var(--ink);display:grid;place-items:center;font-size:28px}
+.nm{font:700 1.15rem Fredoka,sans-serif}
+.dt{color:#4a5d73;font-size:.95rem}
+.dt a{color:var(--ink)}
+.pr{font-weight:650}
+button{font:700 1rem Fredoka,sans-serif;padding:11px 16px;border:2px solid var(--ink);border-radius:12px;background:var(--ink);color:#fff;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+button:disabled{opacity:.6;cursor:wait}
+.badge{font:700 1rem Fredoka,sans-serif;padding:9px 14px;border-radius:12px;background:var(--mint);border:2px solid var(--ink)}
+.item.done{opacity:.72}.item.done .ico{background:var(--mint)}
+dialog{border:2px solid var(--ink);border-radius:18px;padding:24px;max-width:440px;width:calc(100% - 32px);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:rgba(31,46,77,.45)}
+dialog h2{font:700 1.5rem Fredoka,sans-serif;margin:0 0 4px}
+label{display:block;font-weight:650;margin:14px 0 6px}
+input,textarea{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+.acts{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.acts .ghost{background:#fff;color:var(--ink)}
+#derr{color:#9b2c2c;font-weight:600;margin:12px 0 0;min-height:1.4em}
+@media(max-width:520px){.item{grid-template-columns:48px 1fr}.ico{width:48px;height:48px;font-size:24px}.act{grid-column:1/-1}.act button,.act .badge{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+<main>
+  <nav aria-label="Pages"><a href="index.html">Le Petit Tour</a><a href="pronostics.html">Pronostics</a><a href="liste.html" aria-current="page">Liste de naissance</a></nav>
+  <h1>La liste de naissance de Coline &amp; Oliver</h1>
+  <p class="intro">Si vous souhaitez offrir un cadeau à bébé, choisissez-le ici et réservez-le : il sera marqué « réservé » pour que personne d’autre ne l’achète en double.</p>
+
+  <div class="track" aria-hidden="true"><span class="bk" id="bk" style="left:2%">🚲</span><div class="road"><i id="fill"></i></div></div>
+  <p id="count" aria-live="polite"></p>
+  <div id="note" role="status"></div>
+  <ul id="list"></ul>
+</main>
+
+<dialog id="dlg" aria-labelledby="dt">
+  <h2 id="dt"></h2>
+  <p class="dt" style="margin:0">Indiquez votre nom pour réserver ce cadeau.</p>
+  <form id="form">
+    <label for="nom">Votre prénom et nom</label>
+    <input id="nom" required maxlength="80" autocomplete="name">
+    <label for="msg">Un petit mot pour les parents (facultatif)</label>
+    <textarea id="msg" maxlength="300"></textarea>
+    <p id="derr" role="alert"></p>
+    <div class="acts"><button type="submit" id="ok">Confirmer la réservation</button><button type="button" class="ghost" id="cancel">Annuler</button></div>
+  </form>
+</dialog>
+
+<script>
+// 1) Collez ici l'adresse de l'application web Google (voir les instructions). Laissez vide pour un simple aperçu.
+const BACKEND_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vROIxMXKRARfzeSILUj6jYg_OZbxP6unKvrAQc0m-b_898dCjAgNcw-9MBVtOxxy37I3lTi5yiQ3lpV/pubhtml';
+// 2) Modifiez cette liste : id unique (sans espace), emoji, nom, détail, prix, lien (facultatif).
+const PRODUITS=[
+  {id:'baignoire',e:'🛁',nom:'Baignoire',detail:'',prix:'',lien:''},
+  {id:'gigoteuse',e:'🌙',nom:'Gigoteuse',detail:'',prix:'',lien:''},
+  {id:'bavoirs',e:'🍼',nom:'Bavoirs',detail:'',prix:'',lien:''},
+  {id:'matelas',e:'🛏️',nom:'Matelas à langer',detail:'',prix:'',lien:''},
+  {id:'bonnet',e:'🧢',nom:'Bonnet',detail:'',prix:'',lien:''},
+  {id:'chaussons',e:'🧦',nom:'Chaussons',detail:'',prix:'',lien:''},
+  {id:'pyjama',e:'👕',nom:'Pyjama',detail:'',prix:'',lien:''},
+  {id:'veilleuse',e:'💡',nom:'Veilleuse',detail:'',prix:'',lien:''},
+  {id:'lit-parapluie',e:'⛺',nom:'Lit parapluie',detail:'',prix:'',lien:''},
+  {id:'porte-bebe',e:'🤱',nom:'Porte bébé',detail:'',prix:'',lien:''},
+  {id:'babyphone',e:'📻',nom:'Babyphone',detail:'',prix:'',lien:''},
+  {id:'sac-langer',e:'👜',nom:'Sac à langer',detail:'',prix:'',lien:''},
+  {id:'couverture',e:'🧶',nom:'Couverture',detail:'',prix:'',lien:''},
+  {id:'serviettes',e:'🧺',nom:'Serviettes',detail:'',prix:'',lien:''}
+];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let reserved=new Set(),cur=null;
+
+function render(){
+  $('list').innerHTML=PRODUITS.map(p=>{
+    const done=reserved.has(p.id);
+    return `<li class="item${done?' done':''}"><div class="ico" aria-hidden="true">${p.e}</div>
+      <div><div class="nm">${esc(p.nom)}</div>${p.detail||p.lien?`<div class="dt">${esc(p.detail)}${p.detail&&p.lien?' · ':''}${p.lien?`<a href="${esc(p.lien)}" target="_blank" rel="noopener">Voir le produit</a>`:''}</div>`:''}${p.prix?`<div class="pr">${esc(p.prix)}</div>`:''}</div>
+      <div class="act">${done?'<span class="badge">Déjà réservé</span>':`<button data-id="${esc(p.id)}" aria-label="Réserver : ${esc(p.nom)}">Je le réserve</button>`}</div></li>`;
+  }).join('');
+  const n=reserved.size,t=PRODUITS.length,pc=t?100*n/t:0;
+  $('fill').style.width=pc+'%';$('bk').style.left=Math.min(96,Math.max(2,pc))+'%';
+  $('count').textContent=n+' cadeau'+(n>1?'x':'')+' réservé'+(n>1?'s':'')+' sur '+t;
+}
+function note(t){$('note').textContent=t;$('note').style.display=t?'block':'none'}
+
+$('list').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-id]');if(!b)return;
+  cur=PRODUITS.find(p=>p.id===b.dataset.id);
+  $('dt').textContent=cur.nom;$('derr').textContent='';$('form').reset();$('dlg').showModal();$('nom').focus();
+});
+$('cancel').addEventListener('click',()=>$('dlg').close());
+
+$('form').addEventListener('submit',async e=>{
+  e.preventDefault();const ok=$('ok');ok.disabled=true;ok.textContent='Réservation…';$('derr').textContent='';
+  const nom=$('nom').value.trim(),message=$('msg').value.trim();
+  try{
+    if(BACKEND_URL){
+      const r=await fetch(BACKEND_URL,{method:'POST',body:JSON.stringify({id:cur.id,produit:cur.nom,nom,message})});
+      const d=await r.json();
+      if(!d.ok){
+        if(d.error==='deja'){reserved.add(cur.id);render();$('dlg').close();note('Désolé, quelqu’un vient de réserver « '+cur.nom+' ». Choisissez un autre cadeau !');return}
+        throw 0;
+      }
+    }
+    reserved.add(cur.id);render();$('dlg').close();
+    note('Merci '+nom+' ! « '+cur.nom+' » est réservé pour vous.'+(BACKEND_URL?'':' (Mode aperçu : rien n’est enregistré.)'));
+  }catch{
+    $('derr').textContent='La réservation a échoué. Vérifiez votre connexion et réessayez.';
+  }finally{ok.disabled=false;ok.textContent='Confirmer la réservation'}
+});
+
+(async()=>{
+  render();
+  if(!BACKEND_URL){note('Mode aperçu : les réservations ne sont pas encore enregistrées.');return}
+  try{
+    const d=await (await fetch(BACKEND_URL)).json();
+    reserved=new Set(d.reserved||[]);render();
+  }catch{note('Impossible de vérifier les cadeaux déjà réservés pour le moment. Rechargez la page dans un instant.')}
+})();
+</script>
+</body>
+</html>

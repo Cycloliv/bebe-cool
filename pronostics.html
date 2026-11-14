@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Tour de naissance : faites votre pronostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2e4d;--sky:#cfe6f5;--sun:#f6d95b;--paper:#fbfdff;--line:#b3cde0;--rose:#e98ea0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sky);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}nav a{padding:8px 16px;border:2px solid var(--ink);border-radius:999px;color:var(--ink);text-decoration:none;font:700 1rem Fredoka,sans-serif;background:var(--paper)}nav a[aria-current]{background:var(--sun)}nav a:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+main{max-width:620px;margin:0 auto;padding:40px 20px 64px}
+h1{font:700 clamp(2.2rem,8.5vw,3.3rem)/1.05 Fredoka,"Trebuchet MS",sans-serif;margin:0 0 14px}
+.intro{font-size:1.08rem;margin:0 0 8px;max-width:46ch}
+.bike{display:block;width:100%;max-width:580px;margin:0 0 28px;overflow:visible}
+.wheel{transform-box:fill-box;transform-origin:center;animation:spin 7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.wheel{animation:none}}
+form{position:relative;background:var(--paper);border-radius:18px;border:2px solid var(--ink);overflow:hidden}
+.bibhead{background:var(--sun);border-bottom:2px solid var(--ink);padding:14px 24px;font:700 1.3rem Fredoka,sans-serif}
+form::before,form::after{content:"";position:absolute;top:14px;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);z-index:1}
+form::before{right:14px}form::after{right:36px}
+.fields{padding:26px 24px 28px;display:grid;gap:20px}
+label,legend{font-weight:650;display:block;margin-bottom:6px;padding:0}
+fieldset{border:0;margin:0;padding:0}
+input[type=text],input[type=number],input[type=date],textarea{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choices label{margin:0;font-weight:600}
+.choices input{position:absolute;opacity:0}
+.choices span{display:block;text-align:center;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+.choices input:checked+span{background:var(--sun);border-color:var(--ink)}
+.choices input:focus-visible+span,input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+small{color:#51657a;font-weight:400}
+button{font:700 1.1rem Fredoka,sans-serif;padding:15px;border:2px solid var(--ink);border-radius:12px;background:var(--ink);color:#fff;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.hp{position:absolute;left:-9999px}
+[hidden]{display:none!important}
+.names{display:grid;gap:10px}
+button.link{background:none;border:0;color:var(--ink);text-decoration:underline;font:600 1rem system-ui,sans-serif;padding:8px 0 0;cursor:pointer}
+#ok{display:none;background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:32px 24px}
+#ok h2{font:700 1.9rem Fredoka,sans-serif;margin:0 0 8px}
+#err{display:none;color:#9b2c2c;font-weight:600;margin:0}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <nav aria-label="Pages"><a href="index.html">Le Petit Tour</a><a href="pronostics.html" aria-current="page">Pronostics</a><a href="liste.html">Liste de naissance</a></nav>
+  <h1>Coline &amp; Oliver : bébé arrive à toute pédale !</h1>
+  <p class="intro">Prenez le départ de notre petit Tour de naissance : devinez la date, le poids et la taille. Le meilleur pronostiqueur enfilera le maillot jaune et recevra une surprise.</p>
+
+  <svg class="bike" viewBox="0 0 520 190" role="img" aria-label="Deux vélos d’adulte suivis d’un petit vélo d’enfant sur une route sinueuse"><path d="M-10 105C80 55 160 115 260 85S440 40 535 75V190H-10Z" fill="#e1f1ea"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112V190H-10Z" fill="#bfe3cf"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112" fill="none" stroke="#6f86a3" stroke-width="9" stroke-linecap="round"/><path d="M-10 125C50 125 90 100 150 100C215 100 250 135 320 133C385 131 415 105 470 103C495 102 510 108 535 112" fill="none" stroke="#fbfdff" stroke-width="1.8" stroke-dasharray="8 7"/><g transform="translate(70.0 108.5) rotate(-13.3) scale(0.68)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="5.625"/><path stroke-width="1.9" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="5.625"/><path stroke-width="1.9" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#f6d95b" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="6.1" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/><path d="M-40 -30V-84" stroke-width="2.5"/><path d="M-40 -84L-40 -70L-22 -77Z" fill="#e98ea0" stroke-width="2"/></g><g transform="translate(238.0 114.0) rotate(16.2) scale(1)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#4f8fbf" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.7" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/></g><g transform="translate(410.0 111.5) rotate(-14.9) scale(1)" fill="none" stroke="#1f2e4d"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#e98ea0" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.7" stroke-linecap="round" stroke-linejoin="round" d="M-21 -66H-7M30 -62L27 -74H38"/></g></svg>
+
+  <form name="pronostics" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="f">
+    <div class="bibhead">Mon pronostic</div>
+    <div class="fields">
+      <input type="hidden" name="form-name" value="pronostics">
+      <p class="hp"><label>Ne pas remplir <input name="bot-field"></label></p>
+
+      <div><label for="nom">Votre prénom et nom</label><input type="text" id="nom" name="nom" required autocomplete="name"></div>
+
+            <div><label for="date">Date de naissance</label><input type="date" id="date" name="date" required></div>
+
+      <div class="row">
+        <div><label for="poids">Poids (en grammes)</label><input type="number" id="poids" name="poids" min="1500" max="6000" step="10" placeholder="3400" required></div>
+        <div><label for="taille">Taille (en cm)</label><input type="number" id="taille" name="taille" min="40" max="60" step="0.5" placeholder="50" required></div>
+      </div>
+
+      <fieldset>
+        <legend>Prénom(s) que vous imaginez <small>(facultatif, jusqu’à 3)</small></legend>
+        <div class="names">
+          <input type="text" name="prenom1" id="prenom1" aria-label="Prénom 1" maxlength="40">
+          <input type="text" name="prenom2" id="prenom2" aria-label="Prénom 2" maxlength="40" hidden>
+          <input type="text" name="prenom3" id="prenom3" aria-label="Prénom 3" maxlength="40" hidden>
+        </div>
+        <button type="button" class="link" id="addname">+ Ajouter un autre prénom</button>
+      </fieldset>
+      <div><label for="message">Un petit mot pour les parents <small>(facultatif)</small></label><textarea id="message" name="message"></textarea></div>
+
+      <p id="err">L’envoi a échoué. Vérifiez votre connexion et réessayez.</p>
+      <button type="submit" id="btn">Envoyer mon pronostic</button>
+    </div>
+  </form>
+
+  <div id="ok" role="status" tabindex="-1">
+    <h2>Pronostic enregistré, vous êtes dans la course !</h2>
+    <p>Rendez-vous après la naissance pour découvrir qui enfile le maillot jaune.</p>
+  </div>
+</main>
+<script>
+document.getElementById('addname').addEventListener('click',e=>{
+  const h=['prenom2','prenom3'].map(i=>document.getElementById(i)).find(x=>x.hidden);
+  if(h){h.hidden=false;h.focus()}
+  if(!['prenom2','prenom3'].some(i=>document.getElementById(i).hidden))e.target.hidden=true;
+});
+const f=document.getElementById('f'),btn=document.getElementById('btn'),err=document.getElementById('err'),ok=document.getElementById('ok');
+f.addEventListener('submit',async e=>{
+  e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='Envoi…';
+  try{
+    const r=await fetch(location.pathname,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()});
+    if(!r.ok)throw 0;
+    f.style.display='none';ok.style.display='block';ok.focus();
+  }catch{
+    err.style.display='block';btn.disabled=false;btn.textContent='Envoyer mon pronostic';
+  }
+});
+</script>
+</body>
+</html>
