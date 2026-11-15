@@ -17,6 +17,7 @@ nav a[aria-current]{background:var(--sun)}
 main{max-width:680px;margin:0 auto;padding:40px 20px 64px}
 h1{font:700 clamp(2.1rem,8vw,3rem)/1.05 Fredoka,"Trebuchet MS",sans-serif;margin:0 0 12px}
 .intro{margin:0 0 22px;max-width:50ch}
+.tip{background:var(--mint);border:2px solid var(--ink);border-radius:14px;padding:12px 16px;margin:0 0 22px}
 .track{position:relative;height:30px;margin:0 0 6px}
 .road{position:absolute;left:0;right:0;bottom:4px;height:6px;border-radius:3px;background:var(--paper);border:2px solid var(--ink);overflow:hidden}
 .road i{display:block;height:100%;background:var(--sun);width:0;transition:width .6s}
@@ -54,6 +55,7 @@ textarea{min-height:70px;resize:vertical}
   <nav aria-label="Pages"><a href="index.html">Le Petit Tour</a><a href="pronostics.html">Pronostics</a><a href="liste.html" aria-current="page">Liste de naissance</a></nav>
   <h1>La liste de naissance de Coline &amp; Oliver</h1>
   <p class="intro">Si vous souhaitez offrir un cadeau à bébé, choisissez-le ici et réservez-le : il sera marqué « réservé » pour que personne d’autre ne l’achète en double.</p>
+  <p class="tip">♻️ Les produits de <b>seconde main</b> sont les bienvenus ! Nous pouvons aussi vous aider à trouver le bon modèle : cochez simplement la case « J’ai besoin d’aide pour le modèle » au moment de réserver.</p>
 
   <div class="track" aria-hidden="true"><span class="bk" id="bk" style="left:2%">🚲</span><div class="road"><i id="fill"></i></div></div>
   <p id="count" aria-live="polite"></p>
@@ -80,20 +82,35 @@ textarea{min-height:70px;resize:vertical}
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbw6zrlcOcK-_JnJBmuvB-uhZ86nktsjaaYfWdmODKkeEkGz5XRknSYT71x3PTom_1eVag/exec';
 // 2) Modifiez cette liste : id unique (sans espace), emoji, nom, détail, prix, lien (facultatif).
 const PRODUITS=[
-  {id:'baignoire',e:'🛁',nom:'Baignoire',detail:'',prix:'',lien:''},
-  {id:'gigoteuse',e:'🌙',nom:'Gigoteuse',detail:'',prix:'',lien:''},
-  {id:'bavoirs',e:'🍼',nom:'Bavoirs',detail:'',prix:'',lien:''},
-  {id:'matelas',e:'🛏️',nom:'Matelas à langer',detail:'',prix:'',lien:''},
-  {id:'bonnet',e:'🧢',nom:'Bonnet',detail:'',prix:'',lien:''},
-  {id:'chaussons',e:'🧦',nom:'Chaussons',detail:'',prix:'',lien:''},
-  {id:'pyjama',e:'👕',nom:'Pyjama',detail:'',prix:'',lien:''},
-  {id:'veilleuse',e:'💡',nom:'Veilleuse',detail:'',prix:'',lien:''},
-  {id:'lit-parapluie',e:'⛺',nom:'Lit parapluie',detail:'',prix:'',lien:''},
-  {id:'porte-bebe',e:'🤱',nom:'Porte bébé',detail:'',prix:'',lien:''},
-  {id:'babyphone',e:'📻',nom:'Babyphone',detail:'',prix:'',lien:''},
+  {id:'lit-parapluie',e:'⛺',nom:'Lit parapluie',detail:'Compact pour voyage',prix:'',lien:''},
+  {id:'gigoteuse',e:'🌙',nom:'Gigoteuse',detail:'TOG faible + taille évolutive',prix:'',lien:''},
+  {id:'pyjama-3m',e:'👕',nom:'Pyjama 3M',detail:'',prix:'',lien:''},
+  {id:'pyjama-6m',e:'👕',nom:'Pyjama 6M',detail:'',prix:'',lien:''},
+  {id:'pyjama-9m',e:'👕',nom:'Pyjama 9M',detail:'',prix:'',lien:''},
+  {id:'biberon',e:'🍼',nom:'Biberon',detail:'',prix:'',lien:''},
+  {id:'bavoirs-tissu',e:'🎀',nom:'Bavoirs tissu',detail:'',prix:'',lien:''},
+  {id:'bavoirs-silicone',e:'🎀',nom:'Bavoirs silicone',detail:'',prix:'',lien:''},
+  {id:'lange',e:'🧺',nom:'Lange',detail:'',prix:'',lien:''},
+  {id:'baignoire',e:'🛁',nom:'Baignoire pliable + siège adaptable',detail:'',prix:'',lien:''},
   {id:'sac-langer',e:'👜',nom:'Sac à langer',detail:'',prix:'',lien:''},
-  {id:'couverture',e:'🧶',nom:'Couverture',detail:'',prix:'',lien:''},
-  {id:'serviettes',e:'🧺',nom:'Serviettes',detail:'',prix:'',lien:''}
+  {id:'bodies-12m',e:'👶',nom:'Bodies 12M',detail:'',prix:'',lien:''},
+  {id:'legging',e:'👖',nom:'Legging',detail:'',prix:'',lien:''},
+  {id:'veilleuse',e:'💡',nom:'Veilleuse',detail:'',prix:'',lien:''},
+  {id:'porte-bebe',e:'🤱',nom:'Porte-bébé',detail:'',prix:'',lien:''},
+  {id:'babyphone',e:'📻',nom:'Babyphone',detail:'',prix:'',lien:''},
+  {id:'cape-bain',e:'🧼',nom:'Cape de bain',detail:'',prix:'',lien:''},
+  {id:'matelas',e:'🛏️',nom:'Matelas à langer',detail:'',prix:'',lien:''},
+  {id:'attache-sucette',e:'📎',nom:'Attache sucette',detail:'',prix:'',lien:''},
+  {id:'couverts',e:'🍽️',nom:'Couverts/assiettes en silicone',detail:'',prix:'',lien:''},
+  {id:'grignoteuse',e:'🍎',nom:'Grignoteuse bébé',detail:'',prix:'',lien:''},
+  {id:'jouet-dentition',e:'🦷',nom:'Jouet de dentition',detail:'',prix:'',lien:''},
+  {id:'tapis-langer',e:'🧳',nom:'Tapis à langer nomade',detail:'',prix:'',lien:''},
+  {id:'lunettes',e:'🕶️',nom:'Lunettes de soleil',detail:'',prix:'',lien:''},
+  {id:'chaussettes',e:'🧦',nom:'Chaussettes',detail:'',prix:'',lien:''},
+  {id:'couverture-sortie',e:'🧣',nom:'Couverture de sortie',detail:'',prix:'',lien:''},
+  {id:'manteau-3m',e:'🧥',nom:'Manteau 3M',detail:'',prix:'',lien:''},
+  {id:'bonnet',e:'🧢',nom:'Bonnet de naissance',detail:'',prix:'',lien:''},
+  {id:'coffret-soin',e:'🎁',nom:'Coffret de soin naissance',detail:'',prix:'',lien:''}
 ];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
