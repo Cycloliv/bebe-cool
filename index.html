@@ -48,6 +48,8 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.cd.on{animation:none;opacity:.25}.road svg{animation:none;left:calc(50% - 45px)}.road .wheel{animation:none}}
 #conf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.next{margin:20px 0 0;padding-top:16px;border-top:2px dashed var(--line)}
+.next a{display:inline-block;margin-top:6px;padding:11px 20px;border:2px solid var(--ink);border-radius:12px;background:var(--sun);color:var(--ink);font:700 1.05rem Fredoka,sans-serif;text-decoration:none}
 .link{background:none;border:0;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer;margin-top:8px}
 </style>
 </head>
@@ -88,6 +90,7 @@ input{font:inherit;width:100%;padding:11px 12px;border:1.5px solid var(--line);b
   <p id="verdict"></p>
   <div class="road" aria-hidden="true"><svg viewBox="-72 -78 144 80" fill="none" stroke="#1f2e4d" stroke-linecap="round" stroke-linejoin="round"><g class="wheel"><circle cx="-42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M-42 -56V0M-70 -28H-14M-62 -48L-22 -8M-22 -48L-62 -8"/></g><g class="wheel"><circle cx="42" cy="-28" r="28" stroke-width="4.5"/><path stroke-width="1.5" d="M42 -56V0M14 -28H70M22 -48L62 -8M62 -48L22 -8"/></g><path stroke="#e98ea0" stroke-width="5.5" d="M-42 -28L-14 -60L-6 -26ZM-14 -60L30 -62L32 -54L42 -28M-6 -26L32 -54"/><path stroke-width="4.5" d="M-21 -66H-7M30 -62L27 -74H38"/></svg></div>
   <button class="link" id="again">Revoir la descente de la roue</button>
+  <div class="next">Maintenant que tu sais que c’est <span id="sexe">une fille</span>, tu peux continuer à faire des pronostics ici :<br><a href="pronostics.html">Faire mon pronostic</a></div>
 </section>
 </div>
 </main>
@@ -221,6 +224,7 @@ function countdown(done){
 function reveal(){
   const fille = RESULT === 'fille', n = $('#name').value.trim();
   $('#title').textContent = fille ? 'C’est une petite fille !' : 'C’est un petit garçon !';
+  $('#sexe').textContent = fille ? 'une fille' : 'un garçon';
   const win = bet === RESULT;
   $('#verdict').textContent = (n ? n + ', ' : '') + (win ? 'bravo, tu avais vu juste ! 🏆' : 'raté cette fois… mais le tour ne fait que commencer ! 🚲');
   report(n, win);
